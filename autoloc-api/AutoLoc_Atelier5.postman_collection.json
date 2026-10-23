@@ -1,0 +1,562 @@
+{
+	"info": {
+		"_postman_id": "8f3b2a1c-99d8-4f2a-b09e-7a9d0e2e9c12",
+		"name": "AutoLoc API - Atelier 5",
+		"description": "Collection de tests REST pour l'Atelier 5 UP ASI - Documentation Swagger OpenAPI, Opérations CRUD, Relations bidirectionnelles et Gestion des exceptions.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Documentation OpenAPI & Swagger",
+			"item": [
+				{
+					"name": "1.1 Spécification OpenAPI JSON",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v3/api-docs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v3",
+								"api-docs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.2 Interface Swagger UI",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/swagger-ui.html",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"swagger-ui.html"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Véhicules (CRUD)",
+			"item": [
+				{
+					"name": "2.1 POST - Créer un véhicule",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"immatriculation\": \"123-TN-4567\",\n  \"marque\": \"Toyota\",\n  \"modele\": \"Yaris\",\n  \"categorie\": \"CITADINE\",\n  \"tarifJournalier\": 75.00,\n  \"statut\": \"DISPONIBLE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehicules",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.2 GET - Lister tous les véhicules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehicules",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.3 GET - Véhicule par ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehicules/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.4 PUT - Mettre à jour un véhicule",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"immatriculation\": \"123-TN-4567\",\n  \"marque\": \"Toyota\",\n  \"modele\": \"Yaris Cross\",\n  \"categorie\": \"CITADINE\",\n  \"tarifJournalier\": 85.00,\n  \"statut\": \"DISPONIBLE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehicules/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.5 GET - Véhicule inexistant (404)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehicules/999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules",
+								"999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.6 POST - Véhicule invalide (400)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idVehicule\": 99,\n  \"immatriculation\": \"INVALID-001\",\n  \"marque\": \"Toyota\",\n  \"modele\": \"Yaris\",\n  \"categorie\": \"CITADINE\",\n  \"tarifJournalier\": -50.00,\n  \"statut\": \"DISPONIBLE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehicules",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.7 DELETE - Supprimer un véhicule",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehicules/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Clients (CRUD)",
+			"item": [
+				{
+					"name": "3.1 POST - Créer un client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nom\": \"Ben Salah\",\n  \"prenom\": \"Mohamed\",\n  \"email\": \"mohamed.bensalah@email.com\",\n  \"telephone\": \"21622334455\",\n  \"numPermis\": \"TN-B-78901\",\n  \"dateInscription\": \"2026-10-23\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.2 GET - Lister tous les clients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.3 GET - Client par ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/clients/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.4 PUT - Mettre à jour un client",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nom\": \"Ben Salah\",\n  \"prenom\": \"Mohamed Aziz\",\n  \"email\": \"mohamed.bensalah@email.com\",\n  \"telephone\": \"21699887766\",\n  \"numPermis\": \"TN-B-78901\",\n  \"dateInscription\": \"2026-10-23\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clients/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.5 GET - Client inexistant (404)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/clients/999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients",
+								"999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.6 DELETE - Supprimer un client",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/clients/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Agences (CRUD)",
+			"item": [
+				{
+					"name": "4.1 POST - Créer une agence",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nom\": \"Agence Tunis Centre\",\n  \"ville\": \"Tunis\",\n  \"adresse\": \"Avenue Habib Bourguiba, 1001 Tunis\",\n  \"telephone\": \"21671234567\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/agences",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.2 GET - Lister toutes les agences",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/agences",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.3 GET - Agence par ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/agences/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agences",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.4 PUT - Mettre à jour une agence",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nom\": \"Agence Tunis Centre Ville\",\n  \"ville\": \"Tunis\",\n  \"adresse\": \"Avenue Habib Bourguiba, 1001 Tunis\",\n  \"telephone\": \"21671234568\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/agences/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agences",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.5 DELETE - Supprimer une agence",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/agences/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agences",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Contrats & Cascade Paiements",
+			"item": [
+				{
+					"name": "5.1 POST - Créer un contrat avec paiements associés (Cascade ALL)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dateSignature\": \"2026-10-23\",\n  \"montantTotal\": 450.00,\n  \"valide\": true,\n  \"paiements\": [\n    {\n      \"montant\": 200.00,\n      \"datePaiement\": \"2026-10-23\",\n      \"modePaiement\": \"CARTE\"\n    },\n    {\n      \"montant\": 250.00,\n      \"datePaiement\": \"2026-10-23\",\n      \"modePaiement\": \"ESPECES\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/contrats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"contrats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.2 GET - Contrat par ID (Vérification Jackson sans boucle infinie)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/contrats/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"contrats",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.3 GET - Lister tous les contrats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/contrats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"contrats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.4 POST - Contrat montant négatif (400 Bad Request)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dateSignature\": \"2026-10-23\",\n  \"montantTotal\": -100.00,\n  \"valide\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/contrats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"contrats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.5 GET - Contrat inexistant (404 Not Found)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/contrats/999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"contrats",
+								"999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8089/api",
+			"type": "string"
+		}
+	]
+}
