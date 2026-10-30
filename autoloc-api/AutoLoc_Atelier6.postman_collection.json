@@ -1,0 +1,365 @@
+{
+	"info": {
+		"_postman_id": "9b4c3d2e-11f8-4e3b-a19f-8b8d1e3f0c23",
+		"name": "AutoLoc API - Atelier 6 (DTOs & Validation)",
+		"description": "Collection de tests REST pour l'Atelier 6 UP ASI - Clean Code, DTOs, Bean Validation (@Valid), Mappers et Gestion Centralisée des Exceptions (@RestControllerAdvice).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Documentation OpenAPI & Swagger",
+			"item": [
+				{
+					"name": "1.1 Spécification OpenAPI JSON",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/v3/api-docs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"v3",
+								"api-docs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1.2 Interface Swagger UI",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/swagger-ui/index.html",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"swagger-ui",
+								"index.html"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Véhicules (DTO & Validation)",
+			"item": [
+				{
+					"name": "2.1 POST - Créer un véhicule (Succès 201)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"immatriculation\": \"555-TN-6789\",\n  \"marque\": \"Volkswagen\",\n  \"modele\": \"Golf 8\",\n  \"categorie\": \"BERLINE\",\n  \"tarifJournalier\": 110.00,\n  \"statut\": \"DISPONIBLE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehicules",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.2 POST - Validation échouée (Erreur 400 détaillée)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"immatriculation\": \"\",\n  \"marque\": \"\",\n  \"modele\": \"Golf 8\",\n  \"categorie\": \"BERLINE\",\n  \"tarifJournalier\": -50.00,\n  \"statut\": \"DISPONIBLE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehicules",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.3 GET - Lister tous les véhicules (DTOs)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehicules",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.4 GET - Véhicule par ID (DTO)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehicules/10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.5 GET - Véhicule inexistant (404 Not Found)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehicules/999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicules",
+								"999"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Clients (DTO & Validation)",
+			"item": [
+				{
+					"name": "3.1 POST - Créer un client (Succès 201)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nom\": \"Gharbi\",\n  \"prenom\": \"Selim\",\n  \"email\": \"selim.gharbi@esprit.tn\",\n  \"telephone\": \"21698765432\",\n  \"numPermis\": \"TN-B-99887\",\n  \"dateInscription\": \"2026-10-30\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.2 POST - Validation échouée (Email invalide & Champs vides - 400)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nom\": \"\",\n  \"prenom\": \"Selim\",\n  \"email\": \"adresse_email_incorrecte\",\n  \"telephone\": \"21698765432\",\n  \"numPermis\": \"\",\n  \"dateInscription\": \"2026-10-30\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.3 GET - Lister tous les clients (DTOs)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Agences (DTO & Validation)",
+			"item": [
+				{
+					"name": "4.1 POST - Créer une agence (Succès 201)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nom\": \"Agence Ennasr\",\n  \"ville\": \"Ariana\",\n  \"adresse\": \"Avenue Hédi Nouira, 2037 Ennasr 2\",\n  \"telephone\": \"21671889900\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/agences",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.2 POST - Validation échouée (Champs obligatoires manquants - 400)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nom\": \"\",\n  \"ville\": \"\",\n  \"adresse\": \"\",\n  \"telephone\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/agences",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.3 GET - Lister toutes les agences (DTOs)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/agences",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"agences"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Contrats & Cascade Paiements (DTO)",
+			"item": [
+				{
+					"name": "5.1 POST - Contrat avec Paiements en cascade (DTO)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dateSignature\": \"2026-10-30\",\n  \"montantTotal\": 520.00,\n  \"valide\": true,\n  \"paiements\": [\n    {\n      \"montant\": 220.00,\n      \"datePaiement\": \"2026-10-30\",\n      \"modePaiement\": \"CARTE\"\n    },\n    {\n      \"montant\": 300.00,\n      \"datePaiement\": \"2026-10-30\",\n      \"modePaiement\": \"ESPECES\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/contrats",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"contrats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.2 GET - Contrat par ID (DTO avec Paiements)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/contrats/2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"contrats",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8089/api",
+			"type": "string"
+		}
+	]
+}

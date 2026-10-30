@@ -7,48 +7,60 @@ import org.springframework.stereotype.Service;
 import tn.esprit.autoloc.domain.Contrat;
 import tn.esprit.autoloc.exception.ResourceNotFoundException;
 import tn.esprit.autoloc.repository.IContratRepository;
+import tn.esprit.autoloc.web.dto.ContratDTO;
+import tn.esprit.autoloc.web.mapper.ContratMapper;
 
 @Service
 @RequiredArgsConstructor
 public class ContratServiceImpl implements IContratService {
 
     private final IContratRepository contratRepository;
+    private final ContratMapper contratMapper;
 
     @Override
-    public Contrat create(Contrat contrat) {
-        if (contrat.getIdContrat() != null) {
+    public ContratDTO create(ContratDTO dto) {
+        if (dto.getIdContrat() != null) {
             throw new IllegalArgumentException("Un nouveau contrat ne doit pas avoir d'identifiant");
         }
-        if (contrat.getMontantTotal() != null && contrat.getMontantTotal().compareTo(BigDecimal.ZERO) < 0) {
+        if (dto.getMontantTotal() != null && dto.getMontantTotal().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Le montant total ne peut pas être négatif");
         }
+        Contrat contrat = contratMapper.toEntity(dto);
         if (contrat.getPaiements() != null) {
             contrat.getPaiements().forEach(p -> p.setContrat(contrat));
         }
-        return contratRepository.save(contrat);
+        Contrat saved = contratRepository.save(contrat);
+        return contratMapper.toDto(saved);
     }
 
     @Override
-    public Contrat findById(Long id) {
+    public ContratDTO findById(Long id) {
         return contratRepository.findById(id)
+                .map(contratMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Contrat", id));
     }
 
     @Override
-    public List<Contrat> findAll() {
-        return contratRepository.findAll();
+    public List<ContratDTO> findAll() {
+        return contratRepository.findAll().stream()
+                .map(contratMapper::toDto)
+                .toList();
     }
 
     @Override
-    public Contrat update(Long id, Contrat contrat) {
-        Contrat existant = findById(id);
-        if (contrat.getMontantTotal() != null && contrat.getMontantTotal().compareTo(BigDecimal.ZERO) < 0) {
+    public ContratDTO update(Long id, ContratDTO dto) {
+        Contrat existant = contratRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Contrat", id));
+
+        if (dto.getMontantTotal() != null && dto.getMontantTotal().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Le montant total ne peut pas être négatif");
         }
-        existant.setDateSignature(contrat.getDateSignature());
-        existant.setMontantTotal(contrat.getMontantTotal());
-        existant.setValide(contrat.getValide());
-        return contratRepository.save(existant);
+        existant.setDateSignature(dto.getDateSignature());
+        existant.setMontantTotal(dto.getMontantTotal());
+        existant.setValide(dto.getValide());
+
+        Contrat updated = contratRepository.save(existant);
+        return contratMapper.toDto(updated);
     }
 
     @Override

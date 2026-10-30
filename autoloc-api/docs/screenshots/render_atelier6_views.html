@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Atelier 6 - Validation et DTOs</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
+        body { background-color: #1a1a1a; color: #d4d4d4; padding: 24px; font-size: 13px; }
+        .window { background: #252526; border-radius: 8px; border: 1px solid #3c3c3c; margin-bottom: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); overflow: hidden; }
+        .window-header { background: #1e1e1e; padding: 10px 16px; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; }
+        .window-title { font-weight: 600; color: #fff; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+        .postman-logo { width: 16px; height: 16px; background: #ff6c37; border-radius: 50%; display: inline-block; }
+        .req-bar { padding: 10px 16px; display: flex; align-items: center; gap: 10px; background: #222; border-bottom: 1px solid #333; }
+        .badge { padding: 3px 8px; font-weight: bold; border-radius: 4px; font-size: 11px; }
+        .badge-post { background: #0cbb52; color: #fff; }
+        .url-input { flex: 1; background: #181818; border: 1px solid #3c3c3c; padding: 6px 12px; border-radius: 4px; color: #eee; font-family: monospace; font-size: 12px; }
+        .btn-send { background: #097bed; color: #fff; border: none; padding: 6px 14px; border-radius: 4px; font-weight: 600; }
+        .split-pane { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid #333; }
+        .pane { padding: 12px 16px; }
+        .pane-left { border-right: 1px solid #333; background: #1e1e1e; }
+        .pane-title { font-size: 11px; text-transform: uppercase; color: #888; font-weight: 600; margin-bottom: 6px; }
+        pre { background: #141414; padding: 10px; border-radius: 4px; color: #9cdcfe; font-family: Consolas, monospace; font-size: 11px; line-height: 1.4; border: 1px solid #2d2d2d; }
+        .status-bar { display: flex; align-items: center; justify-content: space-between; padding: 6px 16px; background: #1c1c1c; font-size: 11px; }
+        .status-tag { color: #4ec9b0; font-weight: 600; }
+        .status-tag.err { color: #f48771; }
+        .test-badge { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 500; margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; }
+        .test-pass { background: #132f1a; border: 1px solid #1e5a2b; color: #73c991; }
+        .test-err { background: #331f1f; border: 1px solid #632d2d; color: #e57373; }
+    </style>
+</head>
+<body>
+
+    <!-- CARD 1: ECHEC VALIDATION 400 -->
+    <div class="window">
+        <div class="window-header">
+            <div class="window-title"><span class="postman-logo"></span> Postman — AutoLoc API / 2. Véhicules / 2.2 POST - Validation échouée (Bean Validation @Valid)</div>
+            <div style="color: #888; font-size: 11px;">Gestion centralisée : MethodArgumentNotValidException</div>
+        </div>
+        <div class="req-bar">
+            <span class="badge badge-post">POST</span>
+            <input class="url-input" value="http://localhost:8089/api/vehicules" readonly>
+            <button class="btn-send">Send</button>
+        </div>
+        <div class="split-pane">
+            <div class="pane pane-left">
+                <div class="pane-title">Request Body (DTO invalide : marque/immatriculation vides, tarif négatif)</div>
+                <pre>{
+  "immatriculation": "",
+  "marque": "",
+  "modele": "208",
+  "categorie": "CITADINE",
+  "tarifJournalier": -50.00,
+  "statut": "DISPONIBLE"
+}</pre>
+            </div>
+            <div class="pane">
+                <div class="pane-title">Response Body (GlobalExceptionHandler -> 400 Bad Request)</div>
+                <pre>{
+  "statut": 400,
+  "message": "Échec de validation des données transmises",
+  "horodatage": "2026-10-30T22:46:27",
+  "erreursValidation": {
+    "immatriculation": "L'immatriculation est obligatoire",
+    "tarifJournalier": "Le tarif journalier doit être strictement positif",
+    "marque": "La marque est obligatoire"
+  }
+}</pre>
+                <div class="test-badge test-err">
+                    ✓ Validation interceptée avec succès (400 Bad Request - Erreurs détaillées par champ)
+                </div>
+            </div>
+        </div>
+        <div class="status-bar">
+            <div>Status: <span class="status-tag err">400 Bad Request</span></div>
+            <div style="color: #888;">Contrôle de saisie : @NotBlank, @Positive</div>
+        </div>
+    </div>
+
+    <!-- CARD 2: SUCCES CREATION DTO 201 -->
+    <div class="window">
+        <div class="window-header">
+            <div class="window-title"><span class="postman-logo"></span> Postman — AutoLoc API / 2. Véhicules / 2.1 POST - Créer un véhicule (Succès 201 via DTO & Mapper)</div>
+            <div style="color: #888; font-size: 11px;">Entrée: VehiculeDTO | Sortie: VehiculeDTO</div>
+        </div>
+        <div class="req-bar">
+            <span class="badge badge-post">POST</span>
+            <input class="url-input" value="http://localhost:8089/api/vehicules" readonly>
+            <button class="btn-send">Send</button>
+        </div>
+        <div class="split-pane">
+            <div class="pane pane-left">
+                <div class="pane-title">Request Body (VehiculeDTO valide)</div>
+                <pre>{
+  "immatriculation": "888-TN-9999",
+  "marque": "Peugeot",
+  "modele": "208",
+  "categorie": "CITADINE",
+  "tarifJournalier": 80.00,
+  "statut": "DISPONIBLE"
+}</pre>
+            </div>
+            <div class="pane">
+                <div class="pane-title">Response Body (DTO allégé sans surcharge relationnelle)</div>
+                <pre>{
+  "idVehicule": 10,
+  "immatriculation": "888-TN-9999",
+  "marque": "Peugeot",
+  "modele": "208",
+  "categorie": "CITADINE",
+  "tarifJournalier": 80.00,
+  "statut": "DISPONIBLE",
+  "idAgence": null
+}</pre>
+                <div class="test-badge test-pass">
+                    ✓ 201 Created (Données converties via VehiculeMapper et persistées en base)
+                </div>
+            </div>
+        </div>
+        <div class="status-bar">
+            <div>Status: <span class="status-tag">201 Created</span></div>
+            <div style="color: #888;">Couche Découplée : Controller & Service utilisent VehiculeDTO</div>
+        </div>
+    </div>
+
+    <!-- CARD 3: CLIENT VALIDATION EMAIL 400 -->
+    <div class="window">
+        <div class="window-header">
+            <div class="window-title"><span class="postman-logo"></span> Postman — AutoLoc API / 3. Clients / 3.2 POST - Validation Email et Champs Obligatoires</div>
+            <div style="color: #888; font-size: 11px;">Contrôle de saisie : @Email, @NotBlank</div>
+        </div>
+        <div class="req-bar">
+            <span class="badge badge-post">POST</span>
+            <input class="url-input" value="http://localhost:8089/api/clients" readonly>
+            <button class="btn-send">Send</button>
+        </div>
+        <div class="split-pane">
+            <div class="pane pane-left">
+                <div class="pane-title">Request Body (ClientDTO avec email invalide)</div>
+                <pre>{
+  "nom": "",
+  "prenom": "Yassine",
+  "email": "email_invalide_sans_arobase",
+  "telephone": "21655667788",
+  "numPermis": "",
+  "dateInscription": "2026-10-30"
+}</pre>
+            </div>
+            <div class="pane">
+                <div class="pane-title">Response Body (Erreurs de validation groupées)</div>
+                <pre>{
+  "statut": 400,
+  "message": "Échec de validation des données transmises",
+  "horodatage": "2026-10-30T22:47:03",
+  "erreursValidation": {
+    "nom": "Le nom est obligatoire",
+    "email": "Format d'adresse email invalide",
+    "numPermis": "Le numéro de permis est obligatoire"
+  }
+}</pre>
+                <div class="test-badge test-err">
+                    ✓ Validation Jakarta OK : 3 violations détectées et renvoyées
+                </div>
+            </div>
+        </div>
+        <div class="status-bar">
+            <div>Status: <span class="status-tag err">400 Bad Request</span></div>
+            <div style="color: #888;">Standard REST RFC 7807</div>
+        </div>
+    </div>
+
+</body>
+</html>

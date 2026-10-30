@@ -1,51 +1,59 @@
 package tn.esprit.autoloc.service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.autoloc.domain.Vehicule;
 import tn.esprit.autoloc.exception.ResourceNotFoundException;
 import tn.esprit.autoloc.repository.IVehiculeRepository;
+import tn.esprit.autoloc.web.dto.VehiculeDTO;
+import tn.esprit.autoloc.web.mapper.VehiculeMapper;
 
 @Service
 @RequiredArgsConstructor
 public class VehiculeServiceImpl implements IVehiculeService {
 
     private final IVehiculeRepository vehiculeRepository;
+    private final VehiculeMapper vehiculeMapper;
 
     @Override
-    public Vehicule create(Vehicule vehicule) {
-        if (vehicule.getIdVehicule() != null) {
+    public VehiculeDTO create(VehiculeDTO dto) {
+        if (dto.getIdVehicule() != null) {
             throw new IllegalArgumentException("Un nouveau véhicule ne doit pas avoir d'identifiant");
         }
-        validerVehicule(vehicule);
-        return vehiculeRepository.save(vehicule);
+        Vehicule vehicule = vehiculeMapper.toEntity(dto);
+        Vehicule saved = vehiculeRepository.save(vehicule);
+        return vehiculeMapper.toDto(saved);
     }
 
     @Override
-    public Vehicule findById(Long id) {
+    public VehiculeDTO findById(Long id) {
         return vehiculeRepository.findById(id)
+                .map(vehiculeMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Véhicule", id));
     }
 
     @Override
-    public List<Vehicule> findAll() {
-        return vehiculeRepository.findAll();
+    public List<VehiculeDTO> findAll() {
+        return vehiculeRepository.findAll().stream()
+                .map(vehiculeMapper::toDto)
+                .toList();
     }
 
     @Override
-    public Vehicule update(Long id, Vehicule vehicule) {
-        validerVehicule(vehicule);
-        Vehicule existant = findById(id);
-        existant.setImmatriculation(vehicule.getImmatriculation());
-        existant.setMarque(vehicule.getMarque());
-        existant.setModele(vehicule.getModele());
-        existant.setCategorie(vehicule.getCategorie());
-        existant.setTarifJournalier(vehicule.getTarifJournalier());
-        existant.setStatut(vehicule.getStatut());
-        existant.setAgence(vehicule.getAgence());
-        return vehiculeRepository.save(existant);
+    public VehiculeDTO update(Long id, VehiculeDTO dto) {
+        Vehicule existant = vehiculeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Véhicule", id));
+
+        existant.setImmatriculation(dto.getImmatriculation());
+        existant.setMarque(dto.getMarque());
+        existant.setModele(dto.getModele());
+        existant.setCategorie(dto.getCategorie());
+        existant.setTarifJournalier(dto.getTarifJournalier());
+        existant.setStatut(dto.getStatut());
+
+        Vehicule updated = vehiculeRepository.save(existant);
+        return vehiculeMapper.toDto(updated);
     }
 
     @Override
@@ -54,14 +62,5 @@ public class VehiculeServiceImpl implements IVehiculeService {
             throw new ResourceNotFoundException("Véhicule", id);
         }
         vehiculeRepository.deleteById(id);
-    }
-
-    private void validerVehicule(Vehicule vehicule) {
-        if (vehicule.getImmatriculation() == null || vehicule.getImmatriculation().isBlank()) {
-            throw new IllegalArgumentException("L'immatriculation du véhicule est obligatoire");
-        }
-        if (vehicule.getTarifJournalier() != null && vehicule.getTarifJournalier().compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Le tarif journalier ne peut pas être négatif");
-        }
     }
 }
