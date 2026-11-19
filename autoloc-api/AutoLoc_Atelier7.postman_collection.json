@@ -1,0 +1,196 @@
+{
+	"info": {
+		"_postman_id": "a7f2b91c-4d1e-4b6a-9c88-3f1d0e5a7701",
+		"name": "AutoLoc API - Atelier 7 (Services d'affectation)",
+		"description": "Collection de tests REST pour les 5 services d'affectation AutoLoc (DTOs, Mappers, relations JPA et exposition contrôleurs).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "0. Préparation des données",
+			"item": [
+				{
+					"name": "0.1 Créer un client",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nom\": \"Jerbi\",\n  \"prenom\": \"Amenallah\",\n  \"email\": \"amenallah.jerbi@esprit.tn\",\n  \"telephone\": \"22113344\",\n  \"numPermis\": \"TN-PERMIS-2026\",\n  \"dateInscription\": \"2026-11-19\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/clients",
+							"host": ["{{baseUrl}}"],
+							"path": ["clients"]
+						}
+					}
+				},
+				{
+					"name": "0.2 Créer un véhicule",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"immatriculation\": \"240-TN-9876\",\n  \"marque\": \"Toyota\",\n  \"modele\": \"Yaris\",\n  \"categorie\": \"CITADINE\",\n  \"tarifJournalier\": 75.00,\n  \"statut\": \"DISPONIBLE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehicules",
+							"host": ["{{baseUrl}}"],
+							"path": ["vehicules"]
+						}
+					}
+				},
+				{
+					"name": "0.3 Créer un équipement",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"libelle\": \"GPS\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/equipements",
+							"host": ["{{baseUrl}}"],
+							"path": ["equipements"]
+						}
+					}
+				},
+				{
+					"name": "0.4 Créer une maintenance",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dateDebut\": \"2026-11-19\",\n  \"dateFin\": \"2026-11-20\",\n  \"description\": \"Vidange moteur\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/maintenances",
+							"host": ["{{baseUrl}}"],
+							"path": ["maintenances"]
+						}
+					}
+				},
+				{
+					"name": "0.5 Créer une réservation simple",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dateDebut\": \"2026-11-20\",\n  \"dateFin\": \"2026-11-25\",\n  \"statut\": \"EN_ATTENTE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reservations",
+							"host": ["{{baseUrl}}"],
+							"path": ["reservations"]
+						}
+					}
+				},
+				{
+					"name": "0.6 Créer un contrat simple",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dateSignature\": \"2026-11-19\",\n  \"montantTotal\": 375.00,\n  \"valide\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/contrats",
+							"host": ["{{baseUrl}}"],
+							"path": ["contrats"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "1. Les 5 services d'affectation",
+			"item": [
+				{
+					"name": "1.1 Affecter réservation à un client (idReservation, nom, prenom)",
+					"request": {
+						"method": "PUT",
+						"url": {
+							"raw": "{{baseUrl}}/reservations/1/affecter-client?nom=Jerbi&prenom=Amenallah",
+							"host": ["{{baseUrl}}"],
+							"path": ["reservations", "1", "affecter-client"],
+							"query": [
+								{ "key": "nom", "value": "Jerbi" },
+								{ "key": "prenom", "value": "Amenallah" }
+							]
+						}
+					}
+				},
+				{
+					"name": "1.2 Affecter véhicule à un équipement (idVehicule, idEquipement)",
+					"request": {
+						"method": "PUT",
+						"url": {
+							"raw": "{{baseUrl}}/vehicules/1/equipements/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["vehicules", "1", "equipements", "1"]
+						}
+					}
+				},
+				{
+					"name": "1.3 Affecter maintenance à un véhicule (description, immatriculation)",
+					"request": {
+						"method": "PUT",
+						"url": {
+							"raw": "{{baseUrl}}/vehicules/affecter-maintenance?description=Vidange moteur&immatriculation=240-TN-9876",
+							"host": ["{{baseUrl}}"],
+							"path": ["vehicules", "affecter-maintenance"],
+							"query": [
+								{ "key": "description", "value": "Vidange moteur" },
+								{ "key": "immatriculation", "value": "240-TN-9876" }
+							]
+						}
+					}
+				},
+				{
+					"name": "1.4 Affecter contrat à une réservation (dateSignature, dateDebut, dateFin)",
+					"request": {
+						"method": "PUT",
+						"url": {
+							"raw": "{{baseUrl}}/contrats/affecter-reservation?dateSignature=2026-11-19&dateDebut=2026-11-20&dateFin=2026-11-25",
+							"host": ["{{baseUrl}}"],
+							"path": ["contrats", "affecter-reservation"],
+							"query": [
+								{ "key": "dateSignature", "value": "2026-11-19" },
+								{ "key": "dateDebut", "value": "2026-11-20" },
+								{ "key": "dateFin", "value": "2026-11-25" }
+							]
+						}
+					}
+				},
+				{
+					"name": "1.5 Créer réservation et contrat associé",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dateDebut\": \"2026-12-01\",\n  \"dateFin\": \"2026-12-05\",\n  \"statut\": \"CONFIRMEE\",\n  \"idClient\": 1,\n  \"idVehicule\": 1,\n  \"contrat\": {\n    \"dateSignature\": \"2026-11-28\",\n    \"montantTotal\": 300.00,\n    \"valide\": true\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reservations/avec-contrat",
+							"host": ["{{baseUrl}}"],
+							"path": ["reservations", "avec-contrat"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8089/api",
+			"type": "string"
+		}
+	]
+}

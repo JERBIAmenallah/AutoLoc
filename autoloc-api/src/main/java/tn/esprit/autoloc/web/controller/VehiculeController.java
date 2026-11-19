@@ -17,7 +17,7 @@ import tn.esprit.autoloc.web.dto.VehiculeDTO;
 @RestController
 @RequestMapping("/vehicules")
 @RequiredArgsConstructor
-@Tag(name = "Véhicules", description = "Endpoints de gestion des véhicules avec DTOs et validation")
+@Tag(name = "Véhicules", description = "Endpoints de gestion des véhicules avec DTOs, validation et affectations")
 public class VehiculeController {
 
     private final IVehiculeService vehiculeService;
@@ -78,5 +78,34 @@ public class VehiculeController {
             @PathVariable Long id) {
         vehiculeService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Affecter un équipement à un véhicule", description = "Associe un équipement existant à un véhicule (relation ManyToMany)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Équipement affecté au véhicule avec succès"),
+            @ApiResponse(responseCode = "404", description = "Véhicule ou équipement introuvable")
+    })
+    @PutMapping("/{idVehicule}/equipements/{idEquipement}")
+    public ResponseEntity<VehiculeDTO> affecterVehiculeAEquipement(
+            @Parameter(description = "Identifiant du véhicule", required = true)
+            @PathVariable Long idVehicule,
+            @Parameter(description = "Identifiant de l'équipement", required = true)
+            @PathVariable Long idEquipement) {
+        return ResponseEntity.ok(vehiculeService.affecterVehiculeAEquipement(idVehicule, idEquipement));
+    }
+
+    @Operation(summary = "Affecter une maintenance à un véhicule", description = "Associe une maintenance recherchée par sa description à un véhicule identifié par son immatriculation")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Maintenance affectée au véhicule avec succès"),
+            @ApiResponse(responseCode = "404", description = "Maintenance ou véhicule introuvable"),
+            @ApiResponse(responseCode = "400", description = "Paramètres invalides")
+    })
+    @PutMapping("/affecter-maintenance")
+    public ResponseEntity<VehiculeDTO> affecterMaintenanceAvehicule(
+            @Parameter(description = "Description de la maintenance", required = true)
+            @RequestParam String description,
+            @Parameter(description = "Immatriculation du véhicule", required = true)
+            @RequestParam String immatriculation) {
+        return ResponseEntity.ok(vehiculeService.affecterMaintenanceAvehicule(description, immatriculation));
     }
 }

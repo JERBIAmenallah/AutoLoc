@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +19,7 @@ import tn.esprit.autoloc.web.dto.ContratDTO;
 @RestController
 @RequestMapping("/contrats")
 @RequiredArgsConstructor
-@Tag(name = "Contrats", description = "Endpoints de gestion des contrats de location avec DTOs et validation")
+@Tag(name = "Contrats", description = "Endpoints de gestion des contrats de location avec DTOs et affectations")
 public class ContratController {
 
     private final IContratService contratService;
@@ -78,5 +80,22 @@ public class ContratController {
             @PathVariable Long id) {
         contratService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Affecter un contrat à une réservation", description = "Associe un contrat (recherché par date de signature) à une réservation (recherchée par dates de début et fin)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Contrat affecté à la réservation avec succès"),
+            @ApiResponse(responseCode = "404", description = "Contrat ou réservation introuvable"),
+            @ApiResponse(responseCode = "400", description = "Dates invalides ou réservation déjà associée")
+    })
+    @PutMapping("/affecter-reservation")
+    public ResponseEntity<ContratDTO> affecterContratAReservation(
+            @Parameter(description = "Date de signature du contrat (YYYY-MM-DD)", required = true)
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateSignature,
+            @Parameter(description = "Date de début de la réservation (YYYY-MM-DD)", required = true)
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
+            @Parameter(description = "Date de fin de la réservation (YYYY-MM-DD)", required = true)
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin) {
+        return ResponseEntity.ok(contratService.affecterContratAReservation(dateSignature, dateDebut, dateFin));
     }
 }

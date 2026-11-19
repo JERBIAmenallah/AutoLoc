@@ -9,4 +9,7 @@ public interface IVehiculeService {
     List<VehiculeDTO> findAll();
     VehiculeDTO update(Long id, VehiculeDTO dto);
     void deleteById(Long id);
+
+    VehiculeDTO affecterVehiculeAEquipement(Long idVehicule, Long idEquipement);
+    VehiculeDTO affecterMaintenanceAvehicule(String description, String immatriculation);
 }
